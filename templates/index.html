@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>    
+  <head>
+    <title>PartyPics</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link rel=stylesheet href="{{ url_for('static', filename='css/bootstrap.min.css') }}" media="screen">
+  </head>
+  <body>
+    <h1>Create a new event and start taking pictures</h1>
+    <script src="http://cocd de.jquery.com/jquery.js"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+    <form id="create-event" action="/addevent" method="post" class=add-entry>
+        <input type="text" name="event_name" placeholder='Event Name'></input>
+        <button type="submit" class="btn btn-large btn-primary" >Create!</button>     
+    </form> 
+    {% for message in get_flashed_messages() %}
+    <div class=flash>{{ message }}</div>
+    {% endfor %}
+    <h2>Published Events</h2>
+    {% for event in imagelist %}
+    <p>{{event[0]}}</p>
+        {% for image in event[1]%}
+            <img src="/static/img/{{image}}" class='img-polaroid' height='100' width='100'>
+        {%else%}
+            <p>No images in this event</p>
+        {% endfor %}
+    {% else %}
+    <em>No Published Events</em>
+    {% endfor %}     
+  </body>
+</html>

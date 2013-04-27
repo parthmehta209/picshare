@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Event</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link rel=stylesheet href="{{ url_for('static', filename='css/bootstrap.min.css') }}" media="screen">
+    <script src="{{ url_for('static', filename='js/jquery-1.9.0.js') }}" type="text/javascript"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/partypics.js') }}"></script>
+  </head>
+  <body>
+    <h1>{{eventname}}</h1>
+    <!script src="http://cocd de.jquery.com/jquery.js"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+    <p>Share this link with your friends</p>
+    <a href={{url}}><small>{{url}}</small></a>
+    <div id="uploadpic">
+        <h3>Upload a Picture</h3>
+        <form action="/upload/{{eventlink}}" method="post" enctype=multipart/form-data>
+            <input type="file" accept="image/*;capture=camera" name="capture">
+            <button type="submit" class="btn btn-large btn-primary" >Upload</button>     
+        </form>
+    </div>
+    
+    <div id="voter">
+        <h3>Do you want to publish this event?</h3>
+    <form id="voteyes">
+        <button type="submit" class="btn btn-primary">Yes</button>
+    </form>
+    <form id="voteno">
+        <button type="submit" class="btn btn-primary">No</button>
+    </form>
+    </div>
+    <h4 id="responseRecorded">Your response has been recorded</h4>
+    <h4 id="eventPublished">The event has been Published</h4>
+    <h4 id="eventAborted">The event has NOT been Published</h4>
+    <h3>Event Pictures</h3>
+    <div id="images">
+    {% for image in imagelist %}
+    <img src="/static/img/{{image}}" class="img-polaroid" height="100" width="100">
+    {% else %}
+    <em>Unbelievable.  No entries here so far</em>
+    {% endfor %}
+    </div>
+    <div id="status" style="visibility: hidden">{{status}}</div>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            
+        if($("#status").text()==='init')
+        {   
+            $("#voter").hide();
+            $("#responseRecorded").hide();
+            $("#eventPublished").hide();
+            $("#eventAborted").hide();            
+        }
+        if($("#status").text()==='voting')
+        {
+            $("#uploadpic").show();
+            $("#voter").show();
+            $("#responseRecorded").hide();
+            $("#eventPublished").hide();
+            $("#eventAborted").hide();            
+        }
+        if($("#status").text()==='published')
+        {
+            $("#uploadpic").hide();
+            $("#voter").hide();
+            $("#responseRecorded").hide();
+            $("#eventPublished").show();
+            $("#eventAborted").hide();            
+        }
+        if($("#status").text()==='aborted')
+        {
+            $("#uploadpic").show();
+            $("#voter").hide();
+            $("#responseRecorded").hide();
+            $("#eventPublished").hide();
+            $("#eventAborted").show();            
+        }
+        var cb = new VoteBox({
+            newMessageUrl :  '/',
+            pollUrl : '/'
+        })
+        });
+    </script>
+  </body>
+</html>

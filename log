@@ -1,0 +1,4 @@
+GET on /
+[]
+POST on /addevent ip: 127.0.0.1
+The new event name generate is None
