@@ -3,12 +3,15 @@ import requests
 import pycurl
 from time import sleep
 
-def timeout(url):
-	r = requests.get('http://localhost:5000/timeout/'+url)
+def timeout(event):
+	r = requests.get(server+'timeout/'+event)
         
-def accept_new_event(server,url):
-        r = requests.get(server+url)
-        return r.text
+def accept_new_event(server,eventname,intent,master):
+	try:
+		r = requests.get(server+'acceptevent/'+eventname+':'+intent+':'+master)
+	except:
+		return 'error'
+	return r.text
 
 def uploadFile(url,filename):
 	c = pycurl.Curl()

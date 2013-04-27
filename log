@@ -1,4 +1,15 @@
 GET on /
 []
 POST on /addevent ip: 127.0.0.1
-The new event name generate is None
+The event name created is parth master is 5000
+Event accepted now distributing results
+Event created:parth_4398
+Event parth_4398created
+GET on /event/parth_4398 ip: 127.0.0.1
+Images for event:parth_4398 are:
+[]
+POST on /poll/parth_4398
+GET on /acceptevent/party_4094:intent:5002
+Intent for new event:party_4094 ret:yes
+GET on /acceptevent/party_4094:confirm:5002
+Confirm creation of event:party_4094 ret:yes

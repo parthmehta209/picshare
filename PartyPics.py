@@ -12,6 +12,7 @@ import requests
 import servcomm
 import threading
 import functools
+import sys
 
 monkey.patch_all()   
 
@@ -25,9 +26,7 @@ USERNAME = 'admin'
 PASSWORD = 'default'
 UPLOAD_FOLDER = 'static/img'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif','JPG'])
-SERVER1 = 'http://localhost:5000/'
-SERVER2 = 'http://localhost:5001/'
-SERVER3 = 'http://localhost:5002/'
+
      
      
 app = Flask(__name__)
@@ -168,18 +167,19 @@ def get_event(event):
 
 @app.route('/acceptevent/<event>')
 def accept_event(event):
-    log.write(request.method+' on /acceptevent'+event+'\n')
+    log.write(request.method+' on /acceptevent/'+event+'\n')
     log.flush()
     eventname = event.split(':')[0]
     intent  = event.split(':')[1]
+    master  = event.split(':')[2]
     if intent == 'intent':
-        ret = database.is_event_acceptable(eventname,g)
-        log.write('Intent for new event:'+eventname +' ret:'+ ret)
+        ret = database.is_event_acceptable(eventname,master,g)
+        log.write('Intent for new event:'+eventname +' ret:'+ ret + '\n')
         log.flush()
         return ret
     if intent == 'confirm':
         ret = database.create_new_event(eventname,g)
-        log.write('Confirm creation of event:'+eventname+' ret:'+ret)
+        log.write('Confirm creation of event:'+eventname+' ret:'+ret + '\n')
         log.flush()
         return ret
 
@@ -189,31 +189,31 @@ def add_event():
     log.write(request.method+' on /addevent ip: ' + getip(request)+"\n")
     log.flush()
     ''' creating a new event ''' 
+    master = SERVER1.split(':')[2][:-1]
     eventname = request.form['event_name']
-    eventlink = database.get_new_event_name(eventname,g)
-    log.write('The new event name generate is ' + str(eventlink))
-    log.flush()
+    eventlink = database.get_new_event_name(eventname,master,g)
     if eventlink == '':
         log.write('Event creation failed'+"\n")
         log.flush()
         return redirect(url_for('home'))
-    
-    ret1 = servcomm.accept_new_event(str(SERVER2)+'/acceptevent/'+eventlink+':intent')
-    ret2 = servcomm.accept_new_event(str(SERVER3)+'/acceptevent/'+eventlink+':intent')
+    log.write('The event name created is '+ eventname+' master is '+master+'\n')   
+    log.flush()	
+    ret1 = servcomm.accept_new_event(SERVER2,eventlink,'intent',master)
+    ret2 = servcomm.accept_new_event(SERVER3,eventlink,'intent',master)
     
     if ret1=='yes' and ret2 == 'yes':
-        log.write('Event accepted now distributing results')
-        ret1 = servcomm.accept_new_event(SERVER2+'/acceptevent/'+eventlink+':confirm')
-        ret2 = servcomm.accept_new_event(SERVER3+'/acceptevent/'+eventlink+':confirm')
+        log.write('Event accepted now distributing results\n')
+        ret1 = servcomm.accept_new_event(SERVER2,eventlink,'confirm',master)
+        ret2 = servcomm.accept_new_event(SERVER3,eventlink,'confirm',master)
         if ret1=='yes' and ret2 == 'yes':
-            database.create_event(eventname,g)
-            log.write('Event created:'+eventname)
+            database.create_new_event(eventlink,g)
+            log.write('Event created:'+eventlink+'\n')
         else:
-            log.write('could not confirm from both servers')
+            log.write('could not confirm from both servers\n')
             log.flush()
             return redirect('/')
     else:
-        log.write('could not get intent from both servers')
+        log.write('could not get intent from both servers\n')
         log.flush()
         return redirect('/')
             
@@ -259,7 +259,7 @@ def upload_image(event):
                 log.write("Event published cannot upload any more pictures\n")
                 log.flush()
             else:
-		threading.Timer(10,functools.partial(servcomm.timeout,event+":"+str(transaction))).start()
+		threading.Timer(10,functools.partial(servcomm.timeout,SERVER1,event+":"+str(transaction))).start()
                 #subprocess.Popen(["python", "callee.py",event,str(timer)])
             # wake everyone up and reload images in everyone.
 	    log.write("releasing all events now on picture upload :"+request.cookies.get('user')+": " + event)
@@ -291,4 +291,17 @@ def new_image(event):
 if __name__ == '__main__':
     database.init_db(app.config['DATABASE'])
     #app.run(host='0.0.0.0')#,debug = True)
-    WSGIServer(('', 5000), app.wsgi_app).serve_forever()
+    if sys.argv[1] == '5000':
+	SERVER1 = 'http://localhost:5000/'
+	SERVER2 = 'http://localhost:5001/'
+	SERVER3 = 'http://localhost:5002/'
+    if sys.argv[1] == '5001':
+	SERVER1 = 'http://localhost:5001/'
+	SERVER2 = 'http://localhost:5000/'
+	SERVER3 = 'http://localhost:5002/'
+    if sys.argv[1] == '5002':
+	SERVER1 = 'http://localhost:5002/'
+	SERVER2 = 'http://localhost:5001/'
+	SERVER3 = 'http://localhost:5000/'
+
+    WSGIServer(('', int(sys.argv[1])), app.wsgi_app).serve_forever()

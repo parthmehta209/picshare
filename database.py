@@ -25,7 +25,8 @@ def create_events_table(db):
     db.execute("CREATE TABLE IF NOT EXISTS events\
                     (event text primary key,\
                     published integer,\
-                    timer integer)"
+                    timer integer,\
+					master text)"
                     )
     db.commit() 
 
@@ -40,7 +41,7 @@ def create_image_table(db):
 
 '''Functions related to single events'''   
 ''' get a new event name and inserts a half baked entry'''
-def get_new_event_name(event,g):
+def get_new_event_name(event,master,g):
     counter = 0
     while 1:
         eventname = event + "_"+str(random.randint(1,5000))
@@ -52,27 +53,28 @@ def get_new_event_name(event,g):
             continue
         else:
             break
-    g.db.execute('INSERT INTO events (event,published,timer) VALUES(?,?,?)',[eventname,INTENDED,0])
+    g.db.execute('INSERT INTO events (event,published,timer,master) VALUES(?,?,?,?)',[eventname,INTENDED,0,master])
     g.db.commit()
     return eventname
     
 ''' insert half baked event if acceptabe else return fasle'''    
-def is_event_acceptable(eventname,g):    
+def is_event_acceptable(eventname,master,g):    
     cur = g.db.execute('select * from events where event='+"'"+eventname+"'")
     if(len(cur.fetchall())>0):
         return 'no'
     else:
-        g.db.execute('INSERT INTO events (event,published,timer) VALUES(?,?,?)',[eventname,INTENDED,0])
+        g.db.execute('INSERT INTO events (event,published,timer,master) VALUES(?,?,?,?)',[eventname,INTENDED,0,master])
         g.db.commit()
         return 'yes'
 
 ''' finalize create'''
-def create_new_event(event,g):
-    cur = g.db.execute('update events set published=? where event=?',[ABORTED,eventname])
-    g.db.commit()
-    if cur.rowcount == 1:
-        return 'yes'
-    return 'no'
+def create_new_event(eventname,g):
+	cur = g.db.execute('update events set published=? where event=?',[ABORTED,eventname])
+	g.db.commit()
+	create_event_table(eventname,g)
+	if cur.rowcount == 1:
+		return 'yes'
+	return 'no'
     
 '''    
 def create_new_event(event,g):
@@ -195,11 +197,11 @@ def get_event_status(eventname,g):
 	if len(list1) < 1:
 		return ''
 	ret = list1[0]
-        if ret == 0:
+        if ret == ABORTED:
             status='aborted'
-        elif ret == 1:
+        elif ret == VOTING:
             status='voting'
-        elif ret == 2:
+        elif ret == PUBLISHED:
             status='published'
         return status
 
