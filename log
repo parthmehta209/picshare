@@ -1,15 +1,110 @@
+Get new transID returned :1Sending image to other two servers
+http://localhost:5001/newimage/party_4784:1
+http://localhost:5002/newimage/party_4784:1
+Server http://localhost:5001/newimage/party_4784:1 replied with success
+Server http://localhost:5002/newimage/party_4784:1 replied with successsuccess
+Get new transID returned :1Sending image to other two servers
+http://localhost:5001/newimage/party_2649:1
+http://localhost:5002/newimage/party_2649:1
+Server http://localhost:5001/newimage/party_2649:1 replied with success
+Server http://localhost:5002/newimage/party_2649:1 replied with successsuccess
+Get new transID returned :2Sending image to other two servers
+http://localhost:5001/newimage/party_1583:2
+http://localhost:5002/newimage/party_1583:2
+Server http://localhost:5001/newimage/party_1583:2 replied with success
+Server http://localhost:5002/newimage/party_1583:2 replied with successsuccess
+are:
+[u'asdasd.jpg']
+POST on /poll/party_4784
+POST on vote/yes:party_4784
+register vote row count is 1
+Time out occurred status is :published published party_4784:1
+The database returned :['published', [u'asdasd.jpg']]
+Wait over for user:127.0.0.1 /poll/party_4784 status is:published
+POST on /poll/party_4784
 GET on /
-[]
+[[u'party_4784', [u'asdasd.jpg']]]
 POST on /addevent ip: 127.0.0.1
-The event name created is parth master is 5000
+The event name created is party_2649 master is 5000
 Event accepted now distributing results
-Event created:parth_4398
-Event parth_4398created
-GET on /event/parth_4398 ip: 127.0.0.1
-Images for event:parth_4398 are:
+Event created:party_2649
+Event party_2649created
+GET on /event/party_2649 ip: 127.0.0.1
+Images for event:party_2649 are:
 []
-POST on /poll/parth_4398
-GET on /acceptevent/party_4094:intent:5002
-Intent for new event:party_4094 ret:yes
-GET on /acceptevent/party_4094:confirm:5002
-Confirm creation of event:party_4094 ret:yes
+POST on /poll/party_2649
+Uploading a picture The url to redirect to is:party_2649
+Request:<Request 'http://localhost:5000/upload/party_2649' [POST]>
+Cookie found in user 127.0.0.1
+Cookie found in user but user not in event adding: 127.0.0.1
+Adding new image asdasd.jpg into database
+GET on /gettransid/party_2649 database returned 1
+Start voting returned:success timer started...
+Start timer here
+releasing all events now on picture upload :127.0.0.1: party_2649The database returned :['published', [u'asdasd.jpg']]
+Wait over for user:127.0.0.1 /poll/party_4784 status is:published
+The database returned :['voting', [u'asdasd.jpg']]
+Wait over for user:127.0.0.1 /poll/party_2649 status is:voting
+GET on /event/party_2649 ip: 127.0.0.1
+Images for event:party_2649 are:
+[u'asdasd.jpg']
+POST on /poll/party_2649
+GET on /gettransid/party_2649 database returned 2
+POST on /newimage/party_2649:2
+file name is: asdasdasdas.jpg
+GET on /confirmtrans/party_2649:2
+Confirming transaction start voting returns :success
+The database returned :['voting', [u'asdasd.jpg', u'asdasdasdas.jpg']]
+Wait over for user:127.0.0.1 /poll/party_2649 status is:voting
+POST on /poll/party_2649
+Time out occurred status is :ignore ignore party_2649:1
+Timeout ignored
+POST on vote/yes:party_2649
+register vote row count is 1
+GET on /makeeventstatus/party_2649:2
+make event status returned:published
+GET on /seteventstatus/party_2649:2:published
+set event status returned:success
+The database returned :['published', [u'asdasd.jpg', u'asdasdasdas.jpg']]
+Wait over for user:127.0.0.1 /poll/party_2649 status is:published
+POST on /poll/party_2649
+GET on /
+[[u'party_4784', [u'asdasd.jpg']], [u'party_2649', [u'asdasd.jpg', u'asdasdasdas.jpg']]]
+POST on /addevent ip: 127.0.0.1
+The event name created is party_1583 master is 5000
+Event accepted now distributing results
+Event created:party_1583
+Event party_1583created
+GET on /event/party_1583 ip: 127.0.0.1
+Images for event:party_1583 are:
+[]
+POST on /poll/party_1583
+GET on /gettransid/party_1583 database returned 1
+POST on /newimage/party_1583:1
+file name is: images_1.jpg
+Uploading a picture The url to redirect to is:party_1583
+Request:<Request 'http://localhost:5000/upload/party_1583' [POST]>
+Cookie found in user 127.0.0.1
+Cookie found in user but user not in event adding: 127.0.0.1
+Adding new image asdasd.jpg into database
+GET on /confirmtrans/party_1583:1
+Confirming transaction start voting returns :success
+GET on /gettransid/party_1583 database returned 2
+The database returned :['published', [u'asdasd.jpg', u'asdasdasdas.jpg']]
+Wait over for user:127.0.0.1 /poll/party_2649 status is:published
+The database returned :['voting', [u'images_1.jpg']]
+Wait over for user:127.0.0.1 /poll/party_1583 status is:voting
+Start voting returned:success timer started...
+Start timer here
+releasing all events now on picture upload :127.0.0.1: party_1583GET on /event/party_1583 ip: 127.0.0.1
+Images for event:party_1583 are:
+[u'images_1.jpg', u'asdasd.jpg']
+POST on /poll/party_1583
+POST on vote/no:party_1583
+register vote row count is 1
+GET on /makeeventstatus/party_1583:1
+make event status returned:ignore
+Time out occurred status is :aborted aborted party_1583:2
+The database returned :['aborted', [u'images_1.jpg', u'asdasd.jpg']]
+Wait over for user:127.0.0.1 /poll/party_1583 status is:aborted
+POST on /poll/party_1583

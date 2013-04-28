@@ -1,0 +1,6 @@
+rm picshare/party.db
+rm picshare/static/img/*
+rm server2/static/img/*
+rm server3/static/img/*
+cp picshare/* server2 -r
+cp picshare/* server3 -r
